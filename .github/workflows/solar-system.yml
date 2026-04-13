@@ -58,7 +58,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout repository
-          uses: actions/checkout@v4
+          uses: actions/checkout@v6
 
         - name: Setup Node.js 18
           uses: actions/setup-node@v6
@@ -84,3 +84,17 @@ jobs:
             name: Code-Coverage-Result
             path: coverage
             retention-days: 5
+    
+    docker:
+      name: contairization
+      needs: [code-coverage, unit-testing]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: DockerHub Login
+          uses: docker/login-action@v4.1.0
+          with: 
+            username: ${{vars.DOCKERHUB_USERNAME}}
+            password: ${{secrets.DOCKERHUB_PASSWORD}}
