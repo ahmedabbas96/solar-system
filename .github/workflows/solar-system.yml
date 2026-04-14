@@ -15,6 +15,16 @@ env:
 jobs:
     unit-testing:
         name: Unit Testing
+        services:
+          mongo-db:
+            image: siddharth67/mongo-db:non-prod
+            ports:
+              - 27017:27017
+        env:
+          MONGO_URI: 'mongodb://localhost:27017superData'
+          MONGO_USERNAME: non-prod-user
+          MONGO_PASSWORD: non-prod-password
+  
         strategy:
           matrix:
             nodejs_version: [18,19,20]
@@ -118,4 +128,9 @@ jobs:
             echo "Verifying /live endpoint"
             wget -q -O - http://127.0.0.1:3000/live | grep live
 
-        
+        - name : Docker Push
+          uses: docker/build-push-action@v7
+          with:
+            context: .
+            push: true
+            tags: ${{vars.DOCKERHUB_USERNAME}}/solar-system:${{github.sha}}
